@@ -12,7 +12,7 @@ wskazniki = ['Heating','HotWater','ProducedHeating','ProducedHotWater']
 
 
 # df_read = pd.read_excel('https://github.com/McKenzi84/EyesOnTheWorld/blob/main/energia.xlsx')
-df_read = pd.read_csv('https://github.com/McKenzi84/EyesOnTheWorld/blob/main/energia.csv')
+df_read = pd.read_csv('https://raw.githubusercontent.com/McKenzi84/EyesOnTheWorld/main/energia.csv')
 df_read['year'] = pd.DatetimeIndex(df_read['Date']).year
 df_read['month'] = pd.DatetimeIndex(df_read['Date']).month
 df_read['day'] =pd.DatetimeIndex(df_read['Date']).day
