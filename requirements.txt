@@ -1,6 +1,5 @@
-dash==2.6.1
+dash
 math
-plotly==5.3.1
-openpyxl
+plotly
 gunicorn
 dash-tools
