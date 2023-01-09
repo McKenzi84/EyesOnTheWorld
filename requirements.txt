@@ -1,5 +1,4 @@
 dash==2.5.1
-math
 plotly
 gunicorn
 dash-tools
