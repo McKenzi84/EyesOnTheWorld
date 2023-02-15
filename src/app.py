@@ -1,7 +1,6 @@
 import dash 
 import dash_bootstrap_components as dbc
 from dash import html, dcc, callback , Input , Output, State
-import numpy as np
 from dash.exceptions import PreventUpdate
 import ezdxf
 import plotly.graph_objects as go
