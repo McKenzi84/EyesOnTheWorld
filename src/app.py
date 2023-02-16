@@ -240,11 +240,11 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
 
     cordinates = Step_profile()  
     if s_steps == 1:
-        x, y, z = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+        points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
     elif s_steps == 2: 
-        x, y = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
+        points = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
     elif s_steps == 3: 
-        x, y = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+        points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
     else: 
         x = [1,2,3]
         y = [1,2,3]
@@ -254,9 +254,9 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
 
     # profile 
     profile = doc.blocks.new(name= 'PROFILE')
-    profile.add_lwpolyline(z)
+    profile.add_lwpolyline(points)
     profile.add_line((0,0) , (oal,0))
-    profile.add_lwpolyline(z).scale(1, -1, 1)
+    profile.add_lwpolyline(points).scale(1, -1, 1)
 
     # tip view
     tip = doc.blocks.new(name = 'TIP')
