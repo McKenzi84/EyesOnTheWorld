@@ -171,11 +171,20 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d
 
     cordinates = Step_profile()  
     if s_steps == 1:
-        x, y, z = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+        points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+        x = [i[0] for i in points]
+        y = [i[1] for i in points]
+
     elif s_steps == 2: 
-        x, y = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
+        points = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
+        x = [i[0] for i in points]
+        y = [i[1] for i in points]
+
     elif s_steps == 3: 
-        x, y = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+        points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+        x = [i[0] for i in points]
+        y = [i[1] for i in points]
+
     else: 
         x = [1,2,3]
         y = [1,2,3]
@@ -263,7 +272,11 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
     tip.add_circle((0,0), d1/2)
 
     # frame
-    frame_a4 = ezdxf.readfile('a4.DXF')
+    try: 
+        frame_a4 = ezdxf.readfile('a4.DXF')
+    except: 
+        frame_a4 = ezdxf.readfile('src/a4.DXF')
+
     frame_ent = frame_a4.entities
     frame = doc.blocks.new(name = 'FRAME')
      
