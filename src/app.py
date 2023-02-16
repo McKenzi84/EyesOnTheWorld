@@ -5,6 +5,7 @@ from dash.exceptions import PreventUpdate
 import ezdxf
 import plotly.graph_objects as go
 from step_profile import Step_profile
+from ezdxf.addons.drawing import matplotlib
 
 app = dash.Dash(external_stylesheets=[dbc.themes.SLATE])
 server = app.server
@@ -13,12 +14,12 @@ border = {  'border': '1px outset black',  'border-radius': '5px'}
 
 # Zawartość drop-dałnów
 
-tool_type = ['TFH Drill', 'TFS Drill', 'GK drill',]
-cutting_edges = [2,3,4,5,6]
+# tool_type = ['TFH Drill', 'TFS Drill', 'GK drill',]
+# cutting_edges = [2,3,4,5,6]
 steps = [1,2,3,]
-material = ['Unground bar', 'Ground bar', 'Spacial blank']
-material_coolant = ['Ground helical coolant - 30°','Ground helical coolant - 40°']
-coatings = ['Triple Cr', 'Triple Si', 'Alcrona', 'DLC', 'None']
+# material = ['Unground bar', 'Ground bar', 'Spacial blank']
+# material_coolant = ['Ground helical coolant - 30°','Ground helical coolant - 40°']
+# coatings = ['Triple Cr', 'Triple Si', 'Alcrona', 'DLC', 'None']
 #afc_prices = pd.read_excel('assets/afc_prices.xlsx')# Feedrates: 
 # TFH_FEED = 5
 # TFS_FEED = 10
@@ -259,16 +260,33 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
         y = [1,2,3]
 
     doc = ezdxf.new('R2000')
+    # doc.layout().page_setup(size=(420, 297), margins=(10, 10, 10, 10), units="mm")
+    
     msp = doc.modelspace()
+    
+    doc.layers.add(name="MyLines", color=7, linetype="DASHED")
 
     # profile 
     profile = doc.blocks.new(name= 'PROFILE')
     profile.add_lwpolyline(points)
-    profile.add_line((0,0) , (oal,0))
+    profile.add_line((points[0][0] - 1 ,0) , (oal+2,0), dxfattribs={'layer':'MyLines'})
     profile.add_lwpolyline(points).scale(1, -1, 1)
+
+    # profile dimensions
+    dim = profile.add_aligned_dim(p1=(points[1]), p2=(oal,d1 / 2), distance=30, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2}) #oal
+    dim1 = profile.add_aligned_dim(p1=(points[1]), p2=(points[2]), distance=15, override={'dimtad': 2,'dimasz': 2,'dimtxt': 2})           #d1 length
+    dim2 = profile.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})
+    dim2 = profile.add_aligned_dim(p1=(points[4]), p2=(( points[4][0], -points[4][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})         #d1         #d1
+    # dim3 = msp.add_aligned_dim(p1=(p5), p2=(p5a), distance=10, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})          #shank d
+    # dim4 = msp.add_linear_dim(base= (3,2) ,p1=(p5), p2=(p5a), angle=-270, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})  
+
+    dimensions = [dim, dim1, dim2]
+    for item in dimensions:
+        item.render() 
 
     # tip view
     tip = doc.blocks.new(name = 'TIP')
+
     tip.add_circle((0,0), d1/2)
 
     # frame
@@ -290,8 +308,9 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
     msp.add_blockref('FRAME', (0,0))
 
     doc.saveas(f'drawing.dxf')
+    matplotlib.qsave(doc.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
 
-    return dcc.send_file(f'drawing.dxf')
+    return dcc.send_file(f'drawing.pdf')
 
 
 if __name__ == "__main__":
