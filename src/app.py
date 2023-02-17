@@ -4,7 +4,7 @@ from dash import html, dcc, callback , Input , Output, State
 from dash.exceptions import PreventUpdate
 import ezdxf
 import plotly.graph_objects as go
-from step_profile import Step_profile
+
 from drawing import Drawing
 from ezdxf.addons.drawing import matplotlib
 
@@ -257,76 +257,76 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step ,d3, d3_lengt
     State('flute_l', 'value'),
     
 )
-def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
-    ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
-        '''
-    if n_clicks is None or n_clicks == 0:
-        raise PreventUpdate
+# def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
+#     ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
+#         '''
+#     if n_clicks is None or n_clicks == 0:
+#         raise PreventUpdate
 
-    cordinates = Step_profile()  
-    if s_steps == 1:
-        points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+#     cordinates = Step_profile()  
+#     if s_steps == 1:
+#         points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
       
-    elif s_steps == 2: 
-        points = cordinates.two_steps(d1, d1_length,d2, d2_length, d2_step, shank_d, oal, point)
-    elif s_steps == 3: 
-        points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
-    else: 
-        x = [1,2,3]
-        y = [1,2,3]
+#     elif s_steps == 2: 
+#         points = cordinates.two_steps(d1, d1_length,d2, d2_length, d2_step, shank_d, oal, point)
+#     elif s_steps == 3: 
+#         points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+#     else: 
+#         x = [1,2,3]
+#         y = [1,2,3]
 
-    doc = ezdxf.new('R2000')
-    # doc.layout().page_setup(size=(420, 297), margins=(10, 10, 10, 10), units="mm")
+#     doc = ezdxf.new('R2000')
+#     # doc.layout().page_setup(size=(420, 297), margins=(10, 10, 10, 10), units="mm")
     
-    msp = doc.modelspace()
+#     msp = doc.modelspace()
     
-    doc.layers.add(name="MyLines", color=7, linetype="DASHED")
+#     doc.layers.add(name="MyLines", color=7, linetype="DASHED")
 
-    # profile 
-    profile = doc.blocks.new(name= 'PROFILE')
-    profile.add_lwpolyline(points)
-    profile.add_line((points[0][0] - 1 ,0) , (oal+2,0), dxfattribs={'layer':'MyLines'})
-    profile.add_lwpolyline(points).scale(1, -1, 1)
+#     # profile 
+#     profile = doc.blocks.new(name= 'PROFILE')
+#     profile.add_lwpolyline(points)
+#     profile.add_line((points[0][0] - 1 ,0) , (oal+2,0), dxfattribs={'layer':'MyLines'})
+#     profile.add_lwpolyline(points).scale(1, -1, 1)
 
-    # profile dimensions
-    dim = profile.add_aligned_dim(p1=(points[1]), p2=(oal,d1 / 2), distance=30, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2}) #oal
-    dim1 = profile.add_aligned_dim(p1=(points[1]), p2=(points[2]), distance=15, override={'dimtad': 2,'dimasz': 2,'dimtxt': 2})           #d1 length
-    dim2 = profile.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1}) # d1 
-    dim3 = profile.add_aligned_dim(p1=(points[-3]), p2=(( points[-3][0], -points[-3][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})# shank diameter
-    # dim3 = msp.add_aligned_dim(p1=(p5), p2=(p5a), distance=10, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})          #shank d
-    # dim4 = msp.add_linear_dim(base= (3,2) ,p1=(p5), p2=(p5a), angle=-270, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})  
+#     # profile dimensions
+#     dim = profile.add_aligned_dim(p1=(points[1]), p2=(oal,d1 / 2), distance=30, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2}) #oal
+#     dim1 = profile.add_aligned_dim(p1=(points[1]), p2=(points[2]), distance=15, override={'dimtad': 2,'dimasz': 2,'dimtxt': 2})           #d1 length
+#     dim2 = profile.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1}) # d1 
+#     dim3 = profile.add_aligned_dim(p1=(points[-3]), p2=(( points[-3][0], -points[-3][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})# shank diameter
+#     # dim3 = msp.add_aligned_dim(p1=(p5), p2=(p5a), distance=10, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})          #shank d
+#     # dim4 = msp.add_linear_dim(base= (3,2) ,p1=(p5), p2=(p5a), angle=-270, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})  
 
-    dimensions = [dim, dim1, dim2]
-    for item in dimensions:
-        item.render() 
+#     dimensions = [dim, dim1, dim2]
+#     for item in dimensions:
+#         item.render() 
 
-    # tip view
-    tip = doc.blocks.new(name = 'TIP')
+#     # tip view
+#     tip = doc.blocks.new(name = 'TIP')
 
-    tip.add_circle((0,0), d1/2)
+#     tip.add_circle((0,0), d1/2)
 
-    # frame
-    try: 
-        frame_a4 = ezdxf.readfile('a4.DXF')
-    except: 
-        frame_a4 = ezdxf.readfile('src/a4.DXF')
+#     # frame
+#     try: 
+#         frame_a4 = ezdxf.readfile('a4.DXF')
+#     except: 
+#         frame_a4 = ezdxf.readfile('src/a4.DXF')
 
-    frame_ent = frame_a4.entities
-    frame = doc.blocks.new(name = 'FRAME')
+#     frame_ent = frame_a4.entities
+#     frame = doc.blocks.new(name = 'FRAME')
      
-    for i in frame_ent: 
-        #print(i)
-        frame.add_foreign_entity(i)
+#     for i in frame_ent: 
+#         #print(i)
+#         frame.add_foreign_entity(i)
 
-    # adding blocks to modelspace
-    msp.add_blockref('PROFILE', (-20,0))
-    msp.add_blockref('TIP', (-70,0))
-    msp.add_blockref('FRAME', (0,0))
+#     # adding blocks to modelspace
+#     msp.add_blockref('PROFILE', (-20,0))
+#     msp.add_blockref('TIP', (-70,0))
+#     msp.add_blockref('FRAME', (0,0))
 
-    doc.saveas(f'drawing.dxf')
-    matplotlib.qsave(doc.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
+#     doc.saveas(f'drawing.dxf')
+#     matplotlib.qsave(doc.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
 
-    return dcc.send_file(f'drawing.dxf')
+#     return dcc.send_file(f'drawing.dxf')
 
 
 ###############################
