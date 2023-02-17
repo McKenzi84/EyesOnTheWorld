@@ -1,6 +1,6 @@
 import ezdxf
 import math
-from ezdxf.addons.drawing import matplotlib
+#from ezdxf.addons.drawing import matplotlib
 
 class Drawing:
     def __init__(self,):
@@ -79,6 +79,7 @@ class Drawing:
         p10 = (oal, shank_d / 2 - chamfer)
         p11 = (oal, 0)
         points = (p1,p2,p3,p4,p5,p6,p7,p8,p9,p10,p11)
+        
         msp.add_lwpolyline(points)
         msp.add_line((points[0][0] - 1 ,0) , (oal+2,0), dxfattribs={'layer':'MyLines'})
         msp.add_lwpolyline(points).scale(1, -1, 1)   
@@ -113,7 +114,7 @@ class Drawing:
 
     def save(self, name):
         self.dwg.saveas(f'{name}.dxf')
-        matplotlib.qsave(self.dwg.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
+        #matplotlib.qsave(self.dwg.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
 
 # if __name__ == "__main__":
 #     dwg = Drawing()

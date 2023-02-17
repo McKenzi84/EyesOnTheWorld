@@ -2,11 +2,11 @@ import dash
 import dash_bootstrap_components as dbc
 from dash import html, dcc, callback , Input , Output, State
 from dash.exceptions import PreventUpdate
-import ezdxf
+#import ezdxf
 import plotly.graph_objects as go
 
 from drawing import Drawing
-from ezdxf.addons.drawing import matplotlib
+
 
 app = dash.Dash(external_stylesheets=[dbc.themes.SLATE])
 server = app.server
