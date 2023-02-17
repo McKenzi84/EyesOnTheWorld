@@ -1,6 +1,6 @@
 import ezdxf
 import math
-#from ezdxf.addons.drawing import matplotlib
+from ezdxf.addons.drawing import matplotlib
 
 class Drawing:
     def __init__(self,):
@@ -91,9 +91,22 @@ class Drawing:
         msp = self.dwg.modelspace()
         tip = self.dwg.blocks.new(name = 'TIP')
 
+        try: 
+            face = ezdxf.readfile('face.DXF')
+        except: 
+            face = ezdxf.readfile('src/face.DXF')
+
+        frame_ent = face.entities
+        
+        for i in frame_ent: 
+            #print(i)
+            tip.add_foreign_entity(i)
+
         tip.add_circle((0,0), d1/2)
         msp.add_blockref('TIP', (-70,0))
 
+    
+    
     def add_frame(self):
         msp = self.dwg.modelspace()
         frame = self.dwg.blocks.new(name = 'FRAME')
@@ -114,7 +127,7 @@ class Drawing:
 
     def save(self, name):
         self.dwg.saveas(f'{name}.dxf')
-        #matplotlib.qsave(self.dwg.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
+        matplotlib.qsave(self.dwg.modelspace(), f'{name}.pdf',dpi=100, bg='#FFFFFF')
 
 # if __name__ == "__main__":
 #     dwg = Drawing()

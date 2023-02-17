@@ -81,14 +81,13 @@ column1 = [ html.Br(),
             dbc.Button('Preview', id='calculate'), 
             dbc.Button('DXF', id='drawing_download'),
             dbc.Button('PDF', id='drawing_pdf'),
-            dbc.Button('test', id='test_btn'),
+            
          ]   
 
 column2 = [
     # html.Br(),
     html.Div(id='graph_preview'),
     dcc.Download(id="download_drawing"),
-    dcc.Download(id="test"),
 ]
  
 ########################################################################################################################################
@@ -240,23 +239,23 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step ,d3, d3_lengt
 
 
 
-@app.callback(
-    Output('download_drawing', 'data'),
-    Input('drawing_download', 'n_clicks'),
-    State('s_steps', 'value'),
-    State('d1', 'value'),
-    State('d1_l', 'value'),
-    State('d2', 'value'),
-    State('d2_l', 'value'),
-    State('d2_step', 'value'),
-    State('d3', 'value'),
-    State('d3_l', 'value'),
-    State('shank_d', 'value'),
-    State('oal', 'value'),
-    State('point_angle', 'value'),
-    State('flute_l', 'value'),
+# @app.callback(
+#     Output('download_drawing', 'data'),
+#     Input('drawing_download', 'n_clicks'),
+#     State('s_steps', 'value'),
+#     State('d1', 'value'),
+#     State('d1_l', 'value'),
+#     State('d2', 'value'),
+#     State('d2_l', 'value'),
+#     State('d2_step', 'value'),
+#     State('d3', 'value'),
+#     State('d3_l', 'value'),
+#     State('shank_d', 'value'),
+#     State('oal', 'value'),
+#     State('point_angle', 'value'),
+#     State('flute_l', 'value'),
     
-)
+# )
 # def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
 #     ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
 #         '''
@@ -332,8 +331,9 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step ,d3, d3_lengt
 ###############################
 
 @app.callback(
-    Output('test', 'data'),
-    Input('test_btn', 'n_clicks'),
+    Output('download_drawing', 'data'),
+    Input('drawing_download', 'n_clicks'),
+    Input('drawing_pdf', 'n_clicks'),
     State('s_steps', 'value'),
     State('d1', 'value'),
     State('d1_l', 'value'),
@@ -348,9 +348,12 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step ,d3, d3_lengt
     State('flute_l', 'value'),
     
 )
-def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
+def download_drawing(n_clicks, n_clicks_2,  s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
     ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
         '''
+    ctx = dash.callback_context
+    input_id = ctx.triggered[0]["prop_id"].split(".")[0]
+    
     if n_clicks is None or n_clicks == 0:
         raise PreventUpdate
 
@@ -367,8 +370,13 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d
     drawing.add_endface(d1)
     
     drawing.save('testowyplik')
+    
+    print(input_id)
+    if input_id == 'drawing_download':
+        return dcc.send_file(f'testowyplik.dxf')
 
-    return dcc.send_file(f'testowyplik.dxf')
+    elif input_id == 'drawing_pdf':
+        return dcc.send_file(f'testowyplik.pdf')
 
 
 
