@@ -5,6 +5,7 @@ from dash.exceptions import PreventUpdate
 import ezdxf
 import plotly.graph_objects as go
 from step_profile import Step_profile
+from drawing import Drawing
 from ezdxf.addons.drawing import matplotlib
 
 app = dash.Dash(external_stylesheets=[dbc.themes.SLATE])
@@ -14,16 +15,8 @@ border = {  'border': '1px outset black',  'border-radius': '5px'}
 
 # Zawartość drop-dałnów
 
-# tool_type = ['TFH Drill', 'TFS Drill', 'GK drill',]
-# cutting_edges = [2,3,4,5,6]
 steps = [1,2,3,]
-# material = ['Unground bar', 'Ground bar', 'Spacial blank']
-# material_coolant = ['Ground helical coolant - 30°','Ground helical coolant - 40°']
-# coatings = ['Triple Cr', 'Triple Si', 'Alcrona', 'DLC', 'None']
-#afc_prices = pd.read_excel('assets/afc_prices.xlsx')# Feedrates: 
-# TFH_FEED = 5
-# TFS_FEED = 10
-# GK_FEED = 5
+
 
 column1 = [ html.Br(),
             html.H6('1. Tool info'),
@@ -41,21 +34,25 @@ column1 = [ html.Br(),
                     children = dbc.InputGroup([dbc.InputGroupText('ø 1'),
                                                 dbc.Input(id='d1',type='number',min=3, max=35,  value=10), 
                                                 dbc.InputGroupText('ø 1 length'),
-                                                dbc.Input(id='d1_l',type='number', value= 50, min=20, max=150),
+                                                dbc.Input(id='d1_l',type='number', value= 40, min=20, max=150),
                                                 dbc.Checkbox(id="standalone-checkbox",value=True,)
                                                 ],size='sm',), style={'display':'block'}),
             html.Div(id='d2_details',
                     children = dbc.InputGroup([dbc.InputGroupText('ø 2'),
-                                                dbc.Input(id='d2',type='number', min=3, max=35),
+                                                dbc.Input(id='d2',type='number',value = 12, min=3, max=35),
                                                 dbc.InputGroupText('ø 2 length'),
-                                                dbc.Input(id='d2_l',type='number', min=20, max=150)
+                                                dbc.Input(id='d2_l',type='number', value = 60, min=20, max=150),
+                                                dbc.InputGroupText('Step angle'),
+                                                dbc.Input(id='d2_step',type='number', value = 90, min=30, max=180)
                                                 ],size='sm',), style={'display':'block'}),
 
             html.Div(id='d3_details',
                     children = dbc.InputGroup([dbc.InputGroupText('ø 3'),
-                                                dbc.Input(id='d3',type='number', min=3, max=35), 
+                                                dbc.Input(id='d3',type='number',value = 14, min=3, max=35), 
                                                 dbc.InputGroupText('ø 3 length'),
-                                                dbc.Input(id='d3_l',type='number', min=20, max=150)
+                                                dbc.Input(id='d3_l',type='number',value =70 , min=20, max=150),
+                                                dbc.InputGroupText('Step angle'),
+                                                dbc.Input(id='d3_step',type='number', value = 90, min=30, max=180)
                                                 ],size='sm',), style={'display':'block'}),
 
             html.Div(id='d4_details',
@@ -84,12 +81,14 @@ column1 = [ html.Br(),
             dbc.Button('Preview', id='calculate'), 
             dbc.Button('DXF', id='drawing_download'),
             dbc.Button('PDF', id='drawing_pdf'),
+            dbc.Button('test', id='test_btn'),
          ]   
 
 column2 = [
     # html.Br(),
     html.Div(id='graph_preview'),
     dcc.Download(id="download_drawing"),
+    dcc.Download(id="test"),
 ]
  
 ########################################################################################################################################
@@ -97,7 +96,7 @@ column2 = [
 app.layout =  dbc.Container(children=[
                     html.Br(),
                     html.Img(src="https://www.accuromm-ce.com/wp-content/uploads/2016/11/logo.png", alt="logo", height="40px"),
-                    html.H3('Drill configurator'),
+                    html.H4('Drill configurator'),
                     html.Br(),
                     dbc.Row([
                         #dbc.Col(column1, width=2,),
@@ -168,6 +167,7 @@ def change_visibility(s_steps):
     State('d1_l', 'value'),
     State('d2', 'value'),
     State('d2_l', 'value'),
+    State('d2_step', 'value'),
     State('d3', 'value'),
     State('d3_l', 'value'),
     State('shank_d', 'value'),
@@ -176,23 +176,23 @@ def change_visibility(s_steps):
     State('flute_l', 'value'),
     
 )
-def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d, oal, point, flute_l): 
+def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step ,d3, d3_length, shank_d, oal, point, flute_l): 
     if n_clicks is None or n_clicks == 0:
         raise PreventUpdate
 
-    cordinates = Step_profile()  
+    cordinates = Drawing()  
     if s_steps == 1:
-        points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+        points = cordinates.add_profile_one(d1, d1_length, shank_d, oal, point)
         x = [i[0] for i in points]
         y = [i[1] for i in points]
 
     elif s_steps == 2: 
-        points = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
+        points = cordinates.add_profile_two(d1, d1_length,d2, d2_length, d2_step, shank_d, oal, point)
         x = [i[0] for i in points]
         y = [i[1] for i in points]
 
     elif s_steps == 3: 
-        points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+        points = cordinates.add_profile_three(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
         x = [i[0] for i in points]
         y = [i[1] for i in points]
 
@@ -248,6 +248,7 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d
     State('d1_l', 'value'),
     State('d2', 'value'),
     State('d2_l', 'value'),
+    State('d2_step', 'value'),
     State('d3', 'value'),
     State('d3_l', 'value'),
     State('shank_d', 'value'),
@@ -256,15 +257,18 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d
     State('flute_l', 'value'),
     
 )
-def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d, oal, point, flute_l): 
+def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
+    ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
+        '''
     if n_clicks is None or n_clicks == 0:
         raise PreventUpdate
 
     cordinates = Step_profile()  
     if s_steps == 1:
         points = cordinates.one_step(d1, d1_length, shank_d, oal, point)
+      
     elif s_steps == 2: 
-        points = cordinates.two_steps(d1, d1_length,d2, d2_length, shank_d, oal, point)
+        points = cordinates.two_steps(d1, d1_length,d2, d2_length, d2_step, shank_d, oal, point)
     elif s_steps == 3: 
         points = cordinates.three_steps(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
     else: 
@@ -287,8 +291,8 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
     # profile dimensions
     dim = profile.add_aligned_dim(p1=(points[1]), p2=(oal,d1 / 2), distance=30, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2}) #oal
     dim1 = profile.add_aligned_dim(p1=(points[1]), p2=(points[2]), distance=15, override={'dimtad': 2,'dimasz': 2,'dimtxt': 2})           #d1 length
-    dim2 = profile.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})
-    dim2 = profile.add_aligned_dim(p1=(points[4]), p2=(( points[4][0], -points[4][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})         #d1         #d1
+    dim2 = profile.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1}) # d1 
+    dim3 = profile.add_aligned_dim(p1=(points[-3]), p2=(( points[-3][0], -points[-3][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})# shank diameter
     # dim3 = msp.add_aligned_dim(p1=(p5), p2=(p5a), distance=10, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})          #shank d
     # dim4 = msp.add_linear_dim(base= (3,2) ,p1=(p5), p2=(p5a), angle=-270, override={'dimtad': 2,'dimasz': 2, 'dimtxt': 2})  
 
@@ -323,6 +327,49 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
     matplotlib.qsave(doc.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
 
     return dcc.send_file(f'drawing.dxf')
+
+
+###############################
+
+@app.callback(
+    Output('test', 'data'),
+    Input('test_btn', 'n_clicks'),
+    State('s_steps', 'value'),
+    State('d1', 'value'),
+    State('d1_l', 'value'),
+    State('d2', 'value'),
+    State('d2_l', 'value'),
+    State('d2_step', 'value'),
+    State('d3', 'value'),
+    State('d3_l', 'value'),
+    State('shank_d', 'value'),
+    State('oal', 'value'),
+    State('point_angle', 'value'),
+    State('flute_l', 'value'),
+    
+)
+def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length, d2_step, d3, d3_length, shank_d, oal, point, flute_l): 
+    ''' Funkcja genereuje rysunek narzędzia w formacie .dxf oraz .pdf 
+        '''
+    if n_clicks is None or n_clicks == 0:
+        raise PreventUpdate
+
+    
+    drawing = Drawing()
+    if s_steps == 1:
+        drawing.add_profile_one(d1, d1_length, shank_d, oal, point) 
+    elif s_steps == 2: 
+        drawing.add_profile_two(d1, d1_length,d2, d2_length, d2_step, shank_d, oal, point)
+    elif s_steps == 3: 
+        drawing.add_profile_three(d1, d1_length,d2, d2_length,d3, d3_length, shank_d, oal, point)
+    
+    drawing.add_frame()
+    drawing.add_endface(d1)
+    
+    drawing.save('testowyplik')
+
+    return dcc.send_file(f'testowyplik.dxf')
+
 
 
 if __name__ == "__main__":
