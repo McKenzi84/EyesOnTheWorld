@@ -25,70 +25,80 @@ steps = [1,2,3,]
 # TFS_FEED = 10
 # GK_FEED = 5
 
-
-# column1 = [     html.Br(),
-#                 html.H6('1. Basic info '),
-#                 dcc.Dropdown(id='s_type',options=[{'label': x, 'value': (x)} for x in tool_type],style={'color':'black', 'width': '100%'},placeholder="Select tool type",value="TFH Drill"),
-#                 dcc.Dropdown(id='s_edges',options=[{'label':f' {x} Z' , 'value': (x)} for x in cutting_edges],style={'color':'black', 'width': '100%'},placeholder="How many cutting edges",value=2),
-#                 dcc.Dropdown(id='s_steps',options=[{'label': f' {x} Steps', 'value': (x)} for x in steps],style={'color':'black', 'width': '100%'},placeholder="How many steps", value=1),
-#                 #dcc.Dropdown(id='s_material',options=[{'label': x, 'value': (x)} for x in material],style={'color':'black', 'width': '100%'},placeholder="Material type to be used",),
-#                 dcc.Dropdown(id='s_coating',options=[{'label': f'{x} Coating', 'value': (x)} for x in coatings],style={'color':'black', 'width': '100%'},placeholder="Coating type",),
-#                 html.Div(id='output'),
-#             ]
-
-
 column1 = [ html.Br(),
             html.H6('1. Tool info'),
-            dcc.Dropdown(id='s_steps',options=[{'label': f' {x} Diameter', 'value': (x)} for x in steps],style={'color':'black', 'width': '100%'},placeholder="How many diameters", value=1),
-            dbc.InputGroup([
-                    dbc.InputGroupText('Point angle °'), dbc.Input(id= 'point_angle',type='number', value=135), dbc.InputGroupText('Helix °'),  dbc.Input(id= 'helix_angle',type='number', value=30),],size='sm'),                                              
-            html.Div(id='d1_details',
-                    children = dbc.InputGroup([dbc.InputGroupText('ø 1'),dbc.Input(id='d1',type='number', value=10), dbc.InputGroupText('ø 1 length'),dbc.Input(id='d1_l',type='number', value= 50),
-                    dbc.Checkbox(id="standalone-checkbox",value=True,)
-                     ],size='sm',),
-                    style={'display':'block'}),
-            html.Div(id='d2_details',
-                    children = dbc.InputGroup([dbc.InputGroupText('ø 2'),dbc.Input(id='d2',type='number'), dbc.InputGroupText('ø 2 length'),dbc.Input(id='d2_l',type='number')],size='sm',),
-                    style={'display':'block'}),
-            html.Div(id='d3_details',
-                    children = dbc.InputGroup([dbc.InputGroupText('ø 3'),dbc.Input(id='d3',type='number'), dbc.InputGroupText('ø 3 length'),dbc.Input(id='d3_l',type='number')],size='sm',),
-                    style={'display':'block'}),
-            html.Div(id='d4_details',
-                    children = dbc.InputGroup([dbc.InputGroupText('ø 4'),dbc.Input(id='d4',type='number'), dbc.InputGroupText('ø 4 length'),dbc.Input(id='d4_l',type='number')],size='sm',),
-                    style={'display':'block'}),
-            html.Div(id='d5_details',
-                    children = dbc.InputGroup([dbc.InputGroupText('ø 5 '),dbc.Input(id='d5',type='number'), dbc.InputGroupText('ø 5 length'),dbc.Input(id='d5_l',type='number')],size='sm',),
-                    style={'display':'block'}),
+            dcc.Dropdown(id='s_steps',options=[{'label': f'  No of diameters: {x}', 'value': (x)} for x in steps],style={'color':'black', 'width': '100%'},placeholder="How many diameters", value=1),
             
-            dbc.InputGroup([dbc.InputGroupText('FL'), dbc.Input(id= 'flute_l',type='number', value=50), dbc.InputGroupText('OAL'),  dbc.Input(id= 'oal',type='number', value=100)],size='sm'),
-            dbc.InputGroup([dbc.InputGroupText('Shank ø '), dbc.Input(id = 'shank_d', type='number', value=10),],size='sm'),
+            dbc.InputGroup([
+                    dbc.InputGroupText('Point angle °'), 
+                    dbc.Input(id= 'point_angle',type='number', value=135, min=60, max=180),
+                    #dbc.InputGroupText('Helix °'),  
+                    #dbc.Input(id= 'helix_angle',type='number', value=30),],
+                    ],size='sm'),                                              
+            
+            
+            html.Div(id='d1_details',
+                    children = dbc.InputGroup([dbc.InputGroupText('ø 1'),
+                                                dbc.Input(id='d1',type='number',min=3, max=35,  value=10), 
+                                                dbc.InputGroupText('ø 1 length'),
+                                                dbc.Input(id='d1_l',type='number', value= 50, min=20, max=150),
+                                                dbc.Checkbox(id="standalone-checkbox",value=True,)
+                                                ],size='sm',), style={'display':'block'}),
+            html.Div(id='d2_details',
+                    children = dbc.InputGroup([dbc.InputGroupText('ø 2'),
+                                                dbc.Input(id='d2',type='number', min=3, max=35),
+                                                dbc.InputGroupText('ø 2 length'),
+                                                dbc.Input(id='d2_l',type='number', min=20, max=150)
+                                                ],size='sm',), style={'display':'block'}),
+
+            html.Div(id='d3_details',
+                    children = dbc.InputGroup([dbc.InputGroupText('ø 3'),
+                                                dbc.Input(id='d3',type='number', min=3, max=35), 
+                                                dbc.InputGroupText('ø 3 length'),
+                                                dbc.Input(id='d3_l',type='number', min=20, max=150)
+                                                ],size='sm',), style={'display':'block'}),
+
+            html.Div(id='d4_details',
+                    children = dbc.InputGroup([dbc.InputGroupText('ø 4'),
+                                                dbc.Input(id='d4',type='number', min=3, max=35), 
+                                                dbc.InputGroupText('ø 4 length'),
+                                                dbc.Input(id='d4_l',type='number', min=20, max=150)
+                                                ],size='sm',), style={'display':'block'}),
+            html.Div(id='d5_details',
+                    children = dbc.InputGroup([dbc.InputGroupText('ø 5 '),
+                                                dbc.Input(id='d5',type='number', min=3, max=35), 
+                                                dbc.InputGroupText('ø 5 length'),
+                                                dbc.Input(id='d5_l',type='number', min=20, max=150)
+                                                ],size='sm',), style={'display':'block'}),
+            
+            dbc.InputGroup([dbc.InputGroupText('FL'), 
+                            dbc.Input(id= 'flute_l',type='number', value=50, min=3, max=200),
+                            dbc.InputGroupText('OAL'),  
+                            dbc.Input(id= 'oal',type='number', value=100, min=60, max=200)
+                            ],size='sm'),
+
+            dbc.InputGroup([dbc.InputGroupText('Shank ø '),
+                             dbc.Input(id = 'shank_d', type='number', value=10),
+                             ],size='sm'),
             html.Br(),
             dbc.Button('Preview', id='calculate'), 
-            dbc.Button('Drawing', id='drawing_download'),
+            dbc.Button('DXF', id='drawing_download'),
+            dbc.Button('PDF', id='drawing_pdf'),
          ]   
 
 column2 = [
-    html.Br(),
+    # html.Br(),
     html.Div(id='graph_preview'),
     dcc.Download(id="download_drawing"),
 ]
-# column3 = [ html.Br(),
-#             html.H6('3. Material info'),
-#             dcc.Dropdown(id='bar_type',options=[{'label': x, 'value': (x)} for x in material_coolant],style={'color':'black', 'width': '100%'},placeholder="Type",),
-#             dcc.Dropdown(id='bar_length',options=[310,330,415],style={'color':'black', 'width': '100%'},placeholder="Bar length",),
-#             html.Div(id= 'material_details'),
-#             html.Br(),
-#             dbc.InputGroup([dbc.InputGroupText(' ø '),dbc.Input(id='material_d',type='number', value=10), dbc.InputGroupText('Length'),dbc.Input(id='material_l',type='number', value=105)],size='sm')
-#             ]    
-
-# column4 = [ html.Br(),
-#             html.H6('4. Grinding time'),
-#             html.Div(id='cost_break')
-#             ]     
+ 
 ########################################################################################################################################
 
 app.layout =  dbc.Container(children=[
-                    html.H3('Drawing generator'),
+                    html.Br(),
+                    html.Img(src="https://www.accuromm-ce.com/wp-content/uploads/2016/11/logo.png", alt="logo", height="40px"),
+                    html.H3('Drill configurator'),
+                    html.Br(),
                     dbc.Row([
                         #dbc.Col(column1, width=2,),
                         dbc.Col(column1, width=3,),
@@ -148,7 +158,7 @@ def change_visibility(s_steps):
 #     return text
 
 
-# Profile preview 
+# Profile preview using graph
 
 @app.callback(
     Output('graph_preview', 'children'),
@@ -222,7 +232,9 @@ def graph(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_length, shank_d
     fig.add_trace(go.Scatter(x=[flute_l, flute_l], y=[0, flute_dia], name="Flute"))
     # fig = px.line(x=x, y = y)
     fig.update_layout(template = 'plotly_dark',)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     fig.update_yaxes(scaleanchor = "x", scaleratio = 1,)
+    fig.update_layout(yaxis_range=[0,20])
 
     return dcc.Graph(figure=fig,)
 
@@ -310,7 +322,7 @@ def download_drawing(n_clicks, s_steps, d1, d1_length, d2, d2_length,d3, d3_leng
     doc.saveas(f'drawing.dxf')
     matplotlib.qsave(doc.modelspace(), f'drawing.pdf',dpi=100, bg='#FFFFFF')
 
-    return dcc.send_file(f'drawing.pdf')
+    return dcc.send_file(f'drawing.dxf')
 
 
 if __name__ == "__main__":
