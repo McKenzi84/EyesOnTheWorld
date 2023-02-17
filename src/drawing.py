@@ -1,6 +1,7 @@
 import ezdxf
 import math
 from ezdxf.addons.drawing import matplotlib
+from ezdxf import path
 
 class Drawing:
     def __init__(self,):
@@ -27,9 +28,14 @@ class Drawing:
         msp.add_lwpolyline(points).scale(1, -1, 1)
 
         dim = msp.add_aligned_dim(p1=(points[1]), p2=(oal,d1 / 2), distance=30, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2}) #oal
+        #dim.set_tolerance(.1, hfactor=.4, align="top", dec=2)
+        
         dim1 = msp.add_aligned_dim(p1=(points[1]), p2=(points[2]), distance=15, override={'dimtad': 2,'dimasz': 2,'dimtxt': 2})           #d1 length
         dim2 = msp.add_aligned_dim(p1=(points[1]), p2=(( points[1][0], -points[1][1])), distance=-10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1}) # d1 
+        #dim2.set_tolerance(upper=.1, lower=.15, hfactor=.4, align="middle", dec=2)
+
         dim3 = msp.add_aligned_dim(p1=(points[-3]), p2=(( points[-3][0], -points[-3][1])), distance=10, override={'dimtad': 2, 'dimasz': 2, 'dimtxt': 2, 'dimjust':1})# shank diameter
+        
 
         dimensions = [dim, dim1, dim2]
         for item in dimensions:
@@ -37,7 +43,7 @@ class Drawing:
 
         return points
 
-    def add_profile_two(self, d1, d1_length, d2, d2_length, step_angle, shank_d, oal,point): 
+    def add_profile_two(self, d1, d1_length,step_angle, d2, d2_length,  shank_d, oal,point): 
         msp = self.dwg.modelspace()
         chamfer = 1
         tip = -round(((math.tan(math.radians((180 - point) / 2))) * (d1 / 2)), 3)
